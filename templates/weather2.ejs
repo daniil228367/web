@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="#">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<style>
+        .navbar-custom {
+            background-color: rgb(27, 20, 28);
+            height: 80px;
+        }
+    
+        .navbar-custom .nav-link {
+            color: white !important;
+        }
+    
+        
+        .navbar-custom .navbar-brand {
+            color: white !important;
+        }
+    
+        
+        .navbar-custom .navbar-brand:hover {
+            text-decoration: none !important;
+        }
+        footer {
+    width: 100%;
+    background-color: rgb(27, 20, 28);
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+}
+    </style>
+
+<style>
+    body{
+        background: #8c52ff;
+        font-family:  'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    #weather-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.3);
+        max-width: 400px;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+    }
+
+    h2, label, p{
+        color: #fff;
+        margin: 8px 0;
+    }
+
+    input{
+        width: calc(100%-16px);
+        padding: 8px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        border: 1px solid white;
+        margin-top: 20px;
+    }
+
+    button {
+        background: #debff4;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-top: 20px;
+        width: 100px;
+        font-size: 15px;
+    }
+
+    button:hover {
+        background: #8b48d7 ;
+    }
+
+    #temp-div p {
+        font-size: 60px;
+        margin-top: -30px;
+    }
+
+    #weather-info {
+        font-size: 20px;
+    }
+
+    #weather-icon {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 10px;
+        margin-bottom:
+        0;
+        display: none;
+    }
+
+    #hourly-forecast {
+        margin-top: 50px;
+        overflow-x: auto;
+        white-space: nowrap;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .hourly-item {
+        flex: 0 0 auto;
+        width: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 10px;
+        color: white;
+    }
+
+    .hourly-item img {
+        width: 30px;
+        height: 30px;
+        margin-bottom: 5px;
+    }
+
+    #hourly-heading {
+        color: #fff;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <a class="navbar-brand" href="/">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link text-light" href="/weather2">Weather</a></li>
+                <li class="nav-item"><a class="nav-link text-light" href="/page2">Page 2</a></li>
+                <li class="nav-item"><a class="nav-link text-light" href="/page3">Page 3</a></li>
+                <li class="nav-item"><a class="nav-link text-light" href="/admin">Admin Panel</a></li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <% if (typeof username !== 'undefined') { %>
+                        <span class="nav-link"><%= username %></span>
+                    <% } %>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login" style="margin-left: 10px;">
+                        <i class="fas fa-user"></i> 
+                    </a>
+                </li>
+            </ul>
+            
+        </div>
+    </nav>
+    
+    <div id ="weather-container">
+        <h2>Weather</h2>
+        <input type="text" id="city" placeholder="Enter city">
+        <button onclick="getWeather()">Search</button>
+    
+        <img id="weather-icon" alt="Weather Icon">
+    
+        <div id="temp-div"></div>
+    
+        <div id="weather-info"></div>
+    
+        <div id="hourly-forecast"></div>
+    
+       </div> 
+       <script>
+        function getWeather() {
+        const apiKey = 'c576aca94c41805fc720058ad263fb61';
+        const city = document.getElementById('city').value;
+    
+        if (!city) {
+            alert('Please enter a city');
+            return; // Corrected typo: return instead of retrun
+        }
+    
+        const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+        const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`;
+    
+        fetch(currentWeatherUrl)
+            .then(response => response.json())
+            .then(data => {
+                displayWeather(data);
+            })
+            .catch(error => {
+                console.error('Error fetching current weather data:', error);
+                alert('Error fetching current weather data. Please try again');
+            });
+    
+        fetch(forecastUrl)
+            .then(response => response.json())
+            .then(data => {
+                displayHourlyForecast(data.list);
+            })
+            .catch(error => {
+                console.error('Error fetching hourly forecast data:', error);
+                alert('Error fetching hourly forecast data. Please try again.');
+            });
+    }
+    
+    function displayWeather(data) {
+        const tempDivInfo = document.getElementById('temp-div');
+        const weatherInfoDiv = document.getElementById('weather-info');
+        const weatherIcon = document.getElementById('weather-icon');
+        const hourlyForecastDiv = document.getElementById('hourly-forecast');
+    
+        // Clear previous content
+        weatherInfoDiv.innerHTML = '';
+        hourlyForecastDiv.innerHTML = '';
+        tempDivInfo.innerHTML = '';
+    
+        if (data.cod === '404') {
+            weatherInfoDiv.innerHTML = `<p>${data.message}</p>`;
+        } else {
+            const cityName = data.name;
+            const temperature = Math.round(data.main.temp - 273.15);
+            const description = data.weather[0].description;
+            const iconCode = data.weather[0].icon;
+            const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
+    
+            const temperatureHTML = `<p>${temperature}°C</p>`;
+            const weatherHtml = `<p>${cityName}</p><p>${description}</p>`;
+    
+            tempDivInfo.innerHTML = temperatureHTML;
+            weatherInfoDiv.innerHTML = weatherHtml;
+            weatherIcon.src = iconUrl;
+            weatherIcon.alt = description;
+            showImage();
+        }
+    }
+    
+    function displayHourlyForecast(hourlyData) {
+        const hourlyForecastDiv = document.getElementById('hourly-forecast');
+        const next24Hours = hourlyData.slice(0, 8);
+        next24Hours.forEach(item => {
+            const dateTime = new Date(item.dt * 1000);
+            const hour = dateTime.getHours();
+            const temperature = Math.round(item.main.temp - 273.15);
+            const iconCode = item.weather[0].icon;
+            const iconUrl = `https://openweathermap.org/img/wn/${iconCode}.png`;
+    
+            const hourlyItemHtml = `
+                <div class="hourly-item">
+                    <span>${hour}:00</span>
+                    <img src="${iconUrl}" alt="Hourly Weather Icon">
+                    <span>${temperature}°C</span>
+                </div>
+            `;
+            hourlyForecastDiv.innerHTML += hourlyItemHtml;
+        });
+    }
+    
+    function showImage() {
+        const weatherIcon = document.getElementById('weather-icon');
+        weatherIcon.style.display = 'block';
+    }
+    
+    
+       </script>
+    </body>
+</html>

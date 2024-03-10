@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Registration Form</title>
+    
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.section {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background-color: #1f1a51;
+}
+
+.form-box {
+    width: 380px;
+    height: 510px;
+    position: relative;
+    margin: 6% auto;
+    background: rgb(255, 255, 255); /* Background color */
+    padding: 5px;
+    overflow: hidden;
+    border-radius: 20px;
+    
+}
+
+.button-box {
+    width: 220px;
+    margin: 35px auto;
+    position: relative;
+}
+
+.toggle-btn {
+    padding: 10px 30px;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    outline: none;
+    position: relative;
+}
+
+#btn {
+    top: 0;
+    left: 0;
+    position: absolute;
+    width: 110px;
+    height: 100%;
+    background: #7455f0; /* Button background color */
+    border-radius: 30px;
+    transition: .5s;
+}
+
+.input-group {
+    top: 180px;
+    position: absolute;
+    width: 280px;
+    transition: .5s;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px 0;
+    margin: 5px 0;
+    border-left: 0;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 1px solid #7455f0;
+    outline: none;
+    background: transparent;
+}
+
+.submit-btn {
+    width: 85%;
+    padding: 10px 30px;
+    cursor: pointer;
+    display: block;
+    margin: auto;
+    background: #7455f0; /* Button background color */
+    border: 0;
+    outline: none;
+    border-radius: 30px;
+}
+
+.check-box {
+    margin: 30px 10px 30px 0;
+}
+
+span {
+    color: #777;
+    font-size: 12px;
+    bottom: 68px;
+    position: absolute;
+}
+
+#login {
+    left: 50px;
+}
+
+#signup {
+    left: 450px;
+}
+
+.input-group:last-child .input-field:last-child {
+    margin-bottom: 20px;
+}
+    
+
+
+
+
+    </style>
+</head>
+
+<body>
+    <div class="section">
+        <!-- Form Part -->
+        <div class="form-box">
+            <div class="button-box">
+                <div id="btn"></div>
+                <button type="button" class="toggle-btn" onclick="login()">Login</button>
+                <button type="button" class="toggle-btn" onclick="signup()">Signup</button>
+            </div>
+
+            <form id="login" class="input-group" action="/login" method="POST">
+                <input type="text" class="input-field" name="username" placeholder="Username" required>
+                <input type="password" class="input-field" name="password" placeholder="Enter Password" required>
+                <input type="checkbox" class="check-box"><span>Remember Password</span>
+                <button type="submit" class="submit-btn" id="loginBtn">Log in</button>
+                
+            </form>
+
+            <form id="signup" class="input-group" action="/register" method="POST">
+                <input type="text" class="input-field" name="firstName" placeholder="First Name" required>
+                <input type="text" class="input-field" name="lastName" placeholder="Last Name" required>
+                <input type="number" class="input-field" name="age" placeholder="Age" required>
+                <input type="text" class="input-field" name="country" placeholder="Country" required>
+                <input type="text" class="input-field" name="username" placeholder="Username" required>
+                <input type="password" class="input-field" name="password" placeholder="Password" style="margin-bottom: 20px;" required>
+                <button type="submit" class="submit-btn" id="signupBtn">Signup</button>
+                <div id="registrationMessage" style="display: none;">You successfully registered</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Part -->
+    <script>
+        var x = document.getElementById("login");
+        var y = document.getElementById("signup");
+        var z = document.getElementById("btn");
+
+        // Function to register user
+        async function registerUser() {
+            const form = document.getElementById("signup");
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    document.getElementById("registrationMessage").style.display = "block"; 
+                    return true;
+                } else {
+                    alert(data.message);
+                    return false;
+                }
+            } catch (error) {
+                console.error(error);
+                return false;
+            }
+        }
+
+        // Function to login user
+        async function loginUser() {
+            const form = document.getElementById("login");
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    window.location.href = '/'; 
+                    return true;
+                } else {
+                    alert(data.message);
+                    return false;
+                }
+            } catch (error) {
+                console.error(error);
+                return false;
+            }
+        }
+
+        // Toggle functions
+        function signup() {
+            x.style.left = "-400px";
+            y.style.left = "50px";
+            z.style.left = "110px";
+        }
+
+        function login() {
+            x.style.left = "50px";
+            y.style.left = "450px";
+            z.style.left = "0px";
+        }
+    </script>
+</body>
+</html>

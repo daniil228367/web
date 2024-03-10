@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #412498;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #49118a;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <style>
+        
+        .navbar-custom {
+            background-color: rgb(27, 20, 28);
+            height: 80px;
+        }
+
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: white !important;
+        }
+
+        .navbar-custom .navbar-brand:hover {
+            color: white !important;
+            text-decoration: none;
+        }
+
+        footer {
+            width: 100%;
+            background-color: rgb(27, 20, 28);
+            color: white !important;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <a class="navbar-brand" href="/">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link text-light" href="/weather">Weather</a></li>
+                <li class="nav-item"><a class="nav-link" href="/news">News</a></li>
+                <li class="nav-item"><a class="nav-link" href="/page3">Page 3</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin">Admin Panel</a></li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <% if (typeof username !== 'undefined') { %>
+                        <span class="nav-link"><%= username %></span>
+                    <% } %>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login" style="margin-left: 10px;">
+                        <i class="fas fa-user"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        
+        <form action="/carouselItems" method="post">
+            <input type="text" name="name" placeholder="Name">
+            <input type="text" name="description" placeholder="Description">
+            <input type="text" name="photoUrl" placeholder="Photo URL">
+            <button type="submit">Create Item</button>
+        </form>
+    
+      
+<form id="updateForm">
+    <input type="text" id="updateName" placeholder="New Name">
+    <input type="text" id="updateDescription" placeholder="New Description">
+    <input type="text" id="updatePhotoUrl" placeholder="New Photo URL">
+    <input type="text" id="itemId" placeholder="Item ID">
+    <button type="button" onclick="updateCarouselItem()">Update Item</button>
+</form>
+
+
+        
+        <form id="getByIdForm">
+            <input type="text" id="getItemId" placeholder="Item ID"> 
+            <button type="button" onclick="getCarouselItemById()">Get Item by ID</button>
+        </form>
+        
+        <form id="deleteForm">
+            <input type="text" name="id" placeholder="Item ID">
+            <button type="button" onclick="deleteCarouselItem()">Delete Item by ID</button>
+        </form>
+    
+        <button type="button" onclick="getAllCarouselItems()">Get All Items</button>
+    </div>
+    
+    
+    <table id="carouselItemsTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Photo URL</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+        </tbody>
+    </table>
+    
+    <script>
+      function updateCarouselItem() {
+    var itemId = document.getElementById("itemId").value; 
+
+   
+    var newName = document.getElementById("updateName").value;
+    var newDescription = document.getElementById("updateDescription").value;
+    var newPhotoUrl = document.getElementById("updatePhotoUrl").value;
+
+   
+    var data = {
+        name: newName,
+        description: newDescription,
+        photoUrl: newPhotoUrl
+    };
+
+   
+    fetch('/carouselItems/' + itemId, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Failed to update item');
+    })
+    .then(data => {
+        
+        getAllCarouselItems();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to update item');
+    });
+}
+    
+function getCarouselItemById() {
+    var itemId = document.getElementById("getItemId").value;
+
+    fetch('/carouselItems/' + itemId)
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Failed to get item by ID');
+    })
+    .then(data => {
+        var tableBody = document.getElementById("carouselItemsTable").getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = "";
+        var row = tableBody.insertRow();
+        row.insertCell().textContent = data._id;
+        row.insertCell().textContent = data.name;
+        row.insertCell().textContent = data.description;
+        row.insertCell().textContent = data.photoUrl;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to get item by ID');
+    });
+}
+
+    
+        function deleteCarouselItem() {
+            var formData = new FormData(document.getElementById("deleteForm"));
+    
+            fetch('/carouselItems/' + formData.get('id'), {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                }
+                throw new Error('Failed to delete item');
+            })
+            .then(data => {
+                alert(data); 
+                
+                getAllCarouselItems();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to delete item');
+            });
+        }
+    
+        function getAllCarouselItems() {
+            fetch('/carouselItems')
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Failed to get all items');
+            })
+            .then(data => {
+                
+                var tableBody = document.getElementById("carouselItemsTable").getElementsByTagName('tbody')[0];
+                tableBody.innerHTML = "";
+                data.forEach(item => {
+                    var row = tableBody.insertRow();
+                    row.insertCell().textContent = item._id;
+                    row.insertCell().textContent = item.name;
+                    row.insertCell().textContent = item.description;
+                    row.insertCell().textContent = item.photoUrl;
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to get all items');
+            });
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
